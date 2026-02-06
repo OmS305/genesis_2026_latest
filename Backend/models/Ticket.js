@@ -15,15 +15,15 @@ const ticketSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ["Software", "Hardware", "Network", "Access", "Other"],
+    enum: ["null", "Software", "Hardware", "Network", "Access", "Other"],
   },
   priority: {
     type: String,
-    enum: ["Lowest", "Low", "Medium", "High", "Highest"],
+    enum: ["null","1", "2", "3", "4", "5"],
   },
   status: {
     type: String,
-    enum: ["TO DO", "IN PROGRESS", "PENDING", "DONE"],
+    enum: ["null", "TO DO", "IN PROGRESS", "PENDING", "DONE"],
   },
   createdAt: {
     type: Date,
@@ -31,7 +31,7 @@ const ticketSchema = new mongoose.Schema({
   },
   source: {
     type: String,
-    enum: ["Email", "WhatsApp", "Chatbot"],
+    enum: ["null", "Email", "WhatsApp", "Chatbot"],
   }
 });
 
