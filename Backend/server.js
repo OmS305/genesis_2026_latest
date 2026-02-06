@@ -57,12 +57,12 @@ app.post("/addTicket", async (req, res) => {
     // 🔥 SEND JSON BACK TO N8N
     res.status(201).json({
       success: true,
-      message: "Ticket created successfully",
       ticket: {
         id: savedTicket._id,
         email: savedTicket.email,
         user_name: savedTicket.user_name,
         subject: savedTicket.subject,
+        message: savedTicket.message,
         category: savedTicket.category,
         priority: savedTicket.priority,
         status: savedTicket.status,

@@ -35,4 +35,22 @@ export const getTickets = async () => {
   return response.data;
 };
 
+export const getTicketAnalytics = async () => {
+  const response = await api.get('/api/tickets/analytics');
+  return response.data;
+};
+
+export const getFrequentProblems = async () => {
+  const response = await api.get('/api/tickets/frequent-problems');
+  return response.data;
+};
+
+export const updateProblemSolution = async (subject, solution) => {
+  const response = await api.put('/api/tickets/problems/solution', {
+    subject,
+    solution
+  });
+  return response.data;
+};
+
 export default api;
