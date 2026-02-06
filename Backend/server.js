@@ -3,10 +3,17 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+// Import models
+const Ticket = require("./models/Ticket");
+const User = require("./models/User");
+
+// Import routes
+const authRoutes = require("./routes/authRoutes");
+const ticketRoutes = require("./routes/ticketRoutes");
 
 const app = express();
 app.use(express.json());
-app.use(cors()); // allow n8n requests
+app.use(cors()); // allow requests from frontend
 
 const MONGO_URI=process.env.MONGO_URI;
 
@@ -18,13 +25,9 @@ mongoose.connect(MONGO_URI)
     console.log("❌ MongoDB connection error:", err.message);
 });
 
-// 🔵 Ticket schema
-const Ticket = mongoose.model("Ticket", {
-  email: String,
-  subject: String,
-  message: String,
-  createdAt: { type: Date, default: Date.now }
-});
+// Mount routes
+app.use("/api/auth", authRoutes);
+app.use("/api", ticketRoutes);
 
 // 🔵 Test route
 app.get("/", (req, res) => {
