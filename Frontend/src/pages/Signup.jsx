@@ -10,10 +10,13 @@ const Signup = () => {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     role: 'user'
   });
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -28,7 +31,6 @@ const Signup = () => {
     setError('');
     setLoading(true);
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError('Invalid email format');
@@ -36,14 +38,25 @@ const Signup = () => {
       return;
     }
 
-    const result = await signup(formData);
-    
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    const result = await signup({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: formData.role
+    });
+
     if (result.success) {
       navigate('/login');
     } else {
       setError(result.error);
     }
-    
+
     setLoading(false);
   };
 
@@ -54,7 +67,7 @@ const Signup = () => {
           <h2 className="text-3xl font-semibold text-white mb-6 text-center">
             Create Account
           </h2>
-          
+
           {error && (
             <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded mb-4">
               {error}
@@ -63,70 +76,70 @@ const Signup = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-gray-400 text-sm mb-2">
-                Name
-              </label>
+              <label className="block text-gray-400 text-sm mb-2">Name</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded text-white focus:outline-none focus:border-blue-500"
-                placeholder="Enter your name"
+                className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded text-white"
               />
             </div>
 
             <div>
-              <label className="block text-gray-400 text-sm mb-2">
-                Email
-              </label>
+              <label className="block text-gray-400 text-sm mb-2">Email</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded text-white focus:outline-none focus:border-blue-500"
-                placeholder="Enter your email"
+                className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded text-white"
               />
             </div>
 
+            {/* Password */}
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded text-white pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Password */}
             <div>
               <label className="block text-gray-400 text-sm mb-2">
-                Password
+                Confirm Password
               </label>
               <input
-                type="password"
-                name="password"
-                value={formData.password}
+                type={showPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded text-white focus:outline-none focus:border-blue-500"
-                placeholder="Enter your password"
+                className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded text-white"
               />
-            </div>
-
-            <div>
-              <label className="block text-gray-400 text-sm mb-2">
-                Role
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded text-white focus:outline-none focus:border-blue-500"
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded disabled:opacity-50"
             >
               {loading ? 'Creating Account...' : 'Sign Up'}
             </button>

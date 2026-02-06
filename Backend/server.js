@@ -37,21 +37,48 @@ app.get("/", (req, res) => {
 // 🔵 Add ticket route
 app.post("/addTicket", async (req, res) => {
   try {
-    console.log("Incoming data:", req.body); // debug
+    console.log("📥 Incoming data:", req.body);
 
-    const t = await Ticket.create(req.body);
+    const newTicket = new Ticket({
+      email: req.body.email,
+      user_name: req.body.user_name,
+      subject: req.body.subject,
+      message: req.body.message,
+      category: req.body.category,
+      priority: req.body.priority,
+      status: req.body.status,
+      source: req.body.source
+    });
 
-    console.log("Saved to Mongo:", t);
+    const savedTicket = await newTicket.save();
 
-    res.json({
+    console.log("✅ Saved to Mongo:", savedTicket);
+
+    // 🔥 SEND JSON BACK TO N8N
+    res.status(201).json({
       success: true,
-      message: "Ticket stored successfully",
-      data: t
+      message: "Ticket created successfully",
+      ticket: {
+        id: savedTicket._id,
+        email: savedTicket.email,
+        user_name: savedTicket.user_name,
+        subject: savedTicket.subject,
+        category: savedTicket.category,
+        priority: savedTicket.priority,
+        status: savedTicket.status,
+        source: savedTicket.source,
+        createdAt: savedTicket.createdAt
+      }
     });
 
   } catch (e) {
-    console.log("❌ Error inserting:", e.message);
-    res.status(500).json({ error: e.message });
+    console.log("❌ Mongo insert error:", e.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Ticket creation failed",
+      error: e.message
+    });
   }
 });
 
